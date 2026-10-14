@@ -5,6 +5,9 @@
 --   opportunity_notes    (high-weight, free text)
 --
 -- {{quarter_start}}, {{quarter_end}} = quarter bounds
+-- ORG ID: a.org_id must be the account's OWN product org, not a parent/ultimate-parent id
+-- (see "Configure your data source" in SKILL.md).
+-- Apply step-0 overrides/exclusions here too (see "Applying overrides" in SKILL.md).
 
 SELECT
   o.id                            AS opp_id,

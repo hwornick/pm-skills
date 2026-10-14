@@ -19,6 +19,7 @@
 * **Subscription Info** ([view subscriptions in BI]({{acq_bi_subs_url}}))
   * {{acq_subs_summary}}
   * **{{acq_integration_count}} of {{acq_wins}} on a paid integration add-on**
+{{acq_account_notes}}
 
 **Close-Loss Notes**
 
@@ -39,15 +40,18 @@
 **Win Notes**
 
 * **${{ret_won_arr}} ARR Renewed ({{ret_arr_pct}}%)**
+* ${{ret_ttm_usage}} TTM Usage Value Renewed ({{ret_ttm_pct}}%)
 
 **Loss Notes**
 
-* **${{ret_churned_arr}} ARR churned**
+* **${{ret_churned_total}} churned** (${{ret_churned_arr}} ARR + ${{ret_lost_ttm_usage}} TTM usage value)
 {{ret_loss_themes}}
 
 # Churn Risk
 
 ---
+
+{{out_of_scope_note}}
 
 *Raw data spreadsheet: {{spreadsheet_path}}*
 

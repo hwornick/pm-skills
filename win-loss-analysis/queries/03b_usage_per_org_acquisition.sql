@@ -8,6 +8,9 @@
 -- {{usage_window_start}} = start of the quarter BEFORE the report quarter
 -- {{quarter_start}}, {{quarter_end}} = bounds of the report quarter
 -- {{report_date}}        = today, exclusive upper bound on activity
+-- ORG ID: a.org_id must be the account's OWN product org, not a parent/ultimate-parent id
+-- (see "Configure your data source" in SKILL.md).
+-- Apply step-0 overrides/exclusions here too (see "Applying overrides" in SKILL.md).
 
 WITH won_orgs AS (
   SELECT DISTINCT

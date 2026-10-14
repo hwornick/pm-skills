@@ -2,8 +2,13 @@
 -- Returns one row per won org with its current subscription product string. The
 -- orchestrator parses subscription_products to tally tiers (Starter/Standard/Pro)
 -- and add-ons (e.g. paid integrations).
+--   current_mrr = base-tier MRR (EXCLUDES add-ons); addons_mrr = all recurring add-on MRR.
+--   Tie-out: (current_mrr + addons_mrr) * 12 should equal the won opp's amount.
 --
 -- {{quarter_start}}, {{quarter_end}} = quarter bounds
+-- ORG ID: a.org_id must be the account's OWN product org, not a parent/ultimate-parent id
+-- (see "Configure your data source" in SKILL.md).
+-- Apply step-0 overrides/exclusions here too (see "Applying overrides" in SKILL.md).
 
 WITH won_orgs AS (
   SELECT DISTINCT

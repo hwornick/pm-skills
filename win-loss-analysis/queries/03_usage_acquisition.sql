@@ -6,6 +6,9 @@
 -- {{usage_window_start}} = start of the quarter BEFORE the report quarter, e.g. '2025-10-01' for Q1 2026
 -- {{quarter_start}}, {{quarter_end}} = bounds of the report quarter (used to identify won opps)
 -- {{report_date}}        = today, exclusive upper bound of the activity window
+-- ORG ID: a.org_id must be the account's OWN product org, not a parent/ultimate-parent id
+-- (see "Configure your data source" in SKILL.md).
+-- Apply step-0 overrides/exclusions here too (see "Applying overrides" in SKILL.md).
 
 WITH won_orgs AS (
   SELECT DISTINCT TRY_CAST(a.org_id AS NUMBER) AS org_id
