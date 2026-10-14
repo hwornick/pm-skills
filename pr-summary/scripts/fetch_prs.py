@@ -14,6 +14,7 @@ Usage:
     python fetch_prs.py --repo owner/name --start 2026-04-24                 # end = today
     python fetch_prs.py --repo owner/name --start 2026-04-24 --end 2026-06-02
     python fetch_prs.py --repo owner/name --start 2026-04-24 --out /tmp/prs.txt
+    python fetch_prs.py --repo owner/name --start 2026-04-24 --base release   # non-default base
 
 Output:
     Writes a compact text file (one entry per PR, sorted by merge date) to
@@ -31,6 +32,7 @@ import sys
 from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
+from urllib.parse import quote_plus
 
 DEPENDABOT_LOGIN = "dependabot[bot]"
 # Bot-noise titles to drop from a completed-work summary. Customize these patterns for your
@@ -39,15 +41,34 @@ BOT_NOISE_RE = re.compile(r"\[BOT\]", re.IGNORECASE)
 HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 
 
-def run_gh_search(repo: str, start: str, end: str) -> list:
+def default_branch(repo: str) -> str:
+    """Look up the repo's default branch (e.g. main / master / trunk)."""
+    result = subprocess.run(
+        ["gh", "api", f"repos/{repo}", "--jq", ".default_branch"],
+        capture_output=True, text=True, check=False,
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        sys.stderr.write(
+            f"Could not look up the default branch of {repo}. "
+            "Is `gh` installed and authenticated, and does the repo exist?\n"
+        )
+        sys.stderr.write(result.stderr)
+        sys.exit(1)
+    return result.stdout.strip()
+
+
+def run_gh_search(repo: str, base: str, start: str, end: str) -> list:
     """Use the GitHub search API to get all merged PRs in the window.
 
     Search-API is preferred over /repos/.../pulls because it supports
     server-side date filtering on merged_at -- no need to over-fetch and
     filter client-side.
+
+    The query MUST be URL-encoded: unencoded spaces in the path make
+    `gh api` hang instead of erroring.
     """
-    query = (
-        f"repo:{repo} is:pr is:merged "
+    query = quote_plus(
+        f"repo:{repo} is:pr is:merged base:{base} "
         f"merged:{start}..{end}"
     )
     cmd = [
@@ -137,6 +158,11 @@ def print_summary(prs, counts, out_path: Path) -> None:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     p.add_argument("--repo", required=True, help="GitHub repo as owner/name")
+    p.add_argument(
+        "--base",
+        default=None,
+        help="Only count PRs merged into this branch. Defaults to the repo's default branch.",
+    )
     p.add_argument("--start", required=True, help="Start date YYYY-MM-DD (inclusive)")
     p.add_argument("--end", default=None, help="End date YYYY-MM-DD (inclusive). Defaults to today.")
     p.add_argument(
@@ -163,7 +189,8 @@ def main() -> None:
     if end < start:
         sys.exit(f"Error: --end ({end}) is before --start ({start})")
 
-    raw = run_gh_search(args.repo, start, end)
+    base = args.base or default_branch(args.repo)
+    raw = run_gh_search(args.repo, base, start, end)
     kept, counts = filter_noise(raw)
     out_path = Path(args.out)
     write_compact(kept, out_path)

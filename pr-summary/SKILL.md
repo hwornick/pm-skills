@@ -56,11 +56,14 @@ Run the bundled script:
 
 ```bash
 python3 scripts/fetch_prs.py --repo <owner/name> --start <YYYY-MM-DD> \
-    [--end <YYYY-MM-DD>] [--out /tmp/pr-summary-prs.txt]
+    [--end <YYYY-MM-DD>] [--base <branch>] [--out /tmp/pr-summary-prs.txt]
 ```
 
 The script:
-- Queries the GitHub search API for merged PRs to the default branch in the window.
+- Queries the GitHub search API for PRs merged in the window into the repo's default
+  branch (looked up automatically; pass `--base` to summarize a different branch, e.g. a
+  long-lived release branch). PRs merged into feature branches are excluded, so work isn't
+  double-counted when the feature branch later lands.
 - Filters out dependabot dep-bumps and bot-noise PRs (neither belongs in a
   completed-work summary). The bot-noise patterns are configurable in the script.
 - Writes a compact text file: one entry per PR with title and a body excerpt.
