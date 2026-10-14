@@ -42,7 +42,7 @@ pile" footer so you can spot-check what was filtered.
    defaults to today).
 3. Fetch + filter PRs:
    ```bash
-   python3 scripts/fetch_prs.py --repo owner/name --start 2026-04-24 [--end 2026-06-02]
+   python3 scripts/fetch_prs.py --repo owner/name --start 2026-04-24 [--end 2026-06-02] [--base <branch>]
    ```
 4. The skill clusters the PRs by initiative, shows you the proposed structure for review
    (you have context the PRs don't), then writes the final plain-language summary.
