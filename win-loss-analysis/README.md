@@ -25,6 +25,14 @@ This skill encodes a more honest method:
 - **Wins measured by adoption, not signatures.** It rolls won logos forward into real
   product-usage data (who's active, who's purchasing, who signed and then ghosted) so a
   "win" that never adopted doesn't get to hide.
+- **Clean data before analysis.** A preflight flags deals in the wrong segment or region,
+  test accounts, and duplicate opps. You confirm the fixes, and they apply to every query,
+  so one misfiled deal can't skew a win rate.
+- **The reason beneath the stated reason.** Optionally, it reads each churned customer's
+  running account-notes doc. The CRM records the last-mile trigger; the notes often show
+  the cause months earlier (a stakeholder change, a missing feature).
+- **Retention measured by value, not just seats.** Alongside ARR, it measures how much
+  trailing-12-month usage value renewing customers kept, and ranks churn by what it cost.
 
 The report splits into **Acquisition** (new logos) and **Retention** (renewals), uses ARR
 as its business metric, and outputs a polished markdown report plus a two-sheet
@@ -33,8 +41,9 @@ raw-data spreadsheet.
 ## What it produces
 
 A markdown report (matching [`template.md`](template.md)) with win rates and ARR for
-Acquisition and Retention, a product-adoption rollup for won logos, a subscription-tier breakdown,
-a deeply-analyzed loss-themes section, a new-logo vertical-analysis appendix, and a linked XLSX 
+Acquisition and Retention, a product-adoption rollup for won logos, a subscription-tier and
+ARR breakdown (including add-on attach uplift), TTM usage retention for renewals, onboarding
+signals from account notes, a deeply-analyzed loss-themes section, a new-logo vertical-analysis appendix, and a linked XLSX 
 of the underlying opportunities.
 
 ## How to use
@@ -45,9 +54,12 @@ of the underlying opportunities.
    [`SKILL.md`](SKILL.md). If you have no product-usage fact, the adoption steps are
    skippable and the rest still works. Market segmentation (SMB/Mid/Enterprise, region,
    etc.) is off by default and documented as an optional add-on.
+   Two more optional inputs: a product-usage fact (for adoption and TTM usage retention) and
+   a doc-store connector (for account notes). The report degrades gracefully without either.
 2. Invoke the skill (e.g. "generate the quarterly win/loss report"). It defaults to the
    prior complete quarter.
-3. It pulls counts and loss text, researches the new logos, clusters the losses, and
+3. It runs the data-quality preflight and waits for you to confirm fixes, then pulls counts
+   and loss text, researches the new logos, reads account notes, clusters the losses, and
    assembles the report + spreadsheet.
 
 The full step-by-step lives in [`SKILL.md`](SKILL.md).

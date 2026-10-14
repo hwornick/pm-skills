@@ -3,6 +3,9 @@
 -- Replace {{quarter_start}} (inclusive) and {{quarter_end}} (exclusive) with quarter bounds.
 --   e.g. Q1 2026 -> '2026-01-01' / '2026-04-01'
 --
+-- Step-0 overrides: exclude confirmed test/duplicate/out-of-scope opps with
+-- AND o.id NOT IN (...), and put any reclassification CASE lines first in the bucket CASE.
+--
 -- Optional: to break this out by a market segment (e.g. SMB / Mid / Enterprise, or region),
 -- join crm_accounts, add your segment column to the SELECT, and add it to GROUP BY.
 
